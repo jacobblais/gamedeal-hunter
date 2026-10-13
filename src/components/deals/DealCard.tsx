@@ -341,7 +341,7 @@ export function DealCard({
         background: 'var(--bg-secondary)',
         display: 'flex', justifyContent: 'space-between',
       }}>
-        <span>Updated {timeAgo(listing.last_checked)}</span>
+        <span suppressHydrationWarning>Updated {timeAgo(listing.last_checked)}</span>
         <span style={{ display: 'flex', alignItems: 'center', gap: 3 }}>
           {listing.in_stock
             ? <><span className="status-dot online" /> In stock</>
