@@ -2,8 +2,8 @@ name: GameDeal Hunter — Scan Retailers
 
 on:
   schedule:
-    # Run every 60 minutes
-    - cron: '*/60 * * * *'
+    # Run at the top of every hour
+    - cron: '0 * * * *'
   # Allow manual trigger from GitHub Actions UI
   workflow_dispatch:
     inputs:
