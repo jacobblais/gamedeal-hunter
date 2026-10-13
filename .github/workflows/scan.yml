@@ -1,0 +1,56 @@
+name: GameDeal Hunter — Scan Retailers
+
+on:
+  schedule:
+    # Run every 60 minutes
+    - cron: '*/60 * * * *'
+  # Allow manual trigger from GitHub Actions UI
+  workflow_dispatch:
+    inputs:
+      retailer:
+        description: 'Specific retailer to scan (leave empty for all)'
+        required: false
+        type: string
+
+jobs:
+  scan:
+    name: Scan Retailer Listings
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          cd worker
+          pip install -r requirements.txt
+
+      - name: Run worker
+        env:
+          SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          NOTIFICATION_EMAIL_FROM: ${{ secrets.NOTIFICATION_EMAIL_FROM }}
+          NOTIFICATION_EMAIL_TO: ${{ secrets.NOTIFICATION_EMAIL_TO }}
+          WORKER_API_KEY: ${{ secrets.WORKER_API_KEY }}
+        run: |
+          cd worker
+          python main.py
+
+      - name: Upload logs on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: worker-logs
+          path: worker/logs/
+          if-no-files-found: ignore
+          retention-days: 7
