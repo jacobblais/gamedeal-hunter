@@ -28,7 +28,7 @@ import requests
 from bs4 import BeautifulSoup
 
 from .base import BaseConnector, ConnectorResult
-from ..normalizer import parse_gpu, parse_ram, parse_storage, parse_display
+from normalizer import parse_gpu, parse_ram, parse_storage, parse_display
 
 log = logging.getLogger(__name__)
 
